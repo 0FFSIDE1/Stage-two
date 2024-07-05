@@ -1,0 +1,31 @@
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+postgresql
+/media
+/staticfiles
+*.sql
+*.sqlite3
+
+/pgdata/
+
+.idea/
+.vscode/
+
+# ENV #
+.env
+.venv
+venv
+venv/
+ENV/
+env/
+.env.*
+*.env
+
+
+
+# System files #
+.DS_Store
+Thumbs.db
