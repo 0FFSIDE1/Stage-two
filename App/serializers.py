@@ -1,16 +1,93 @@
+# serializers.py
 from rest_framework import serializers
 from .models import User, Organisation
 
 
-class RegisterUserSerializers(serializers.ModelSerializer):
+class RegisterUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
- 
-class OrganisationSerializers(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
+        fields = ['firstName', 'lastName', 'email', 'password', 'phone']
+        extra_kwargs = {
+            'password': {'write_only': True},
+        }
+
+    def validate_phone(self, value):
+        """
+        Check if the phone number is valid.
+        """
+        if not value.isdigit():
+            raise serializers.ValidationError("Phone number must contain only digits.")
+        elif len(value) <= 10:
+            raise serializers.ValidationError("Phone number cannot be less than 10 digits long.")
+        elif not isinstance(value, str):
+            raise serializers.ValidationError("Phone number must be a string.")
+        return value
+        
+    def validate(self, data):
+        errors = []
+        if not data.get('firstName'):
+            errors.append({'field': 'firstName', 'message': 'This field is required'})
+        if not data.get('lastName'):
+            errors.append({'field': 'lastName', 'message': 'This field is required'})
+        if not data.get('email'):
+            errors.append({'field': 'email', 'message': 'This field is required'})
+        if not data.get('password'):
+            errors.append({'field': 'password', 'message': 'This field is required'})
+        if User.objects.filter(email=data.get('email')).exists():
+            errors.append({'field': 'email', 'message': 'Email already exists'})
+        if errors:
+            raise serializers.ValidationError({'errors': errors})
+        return data
+    
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['user_Id', 'firstName', 'lastName', 'email', 'phone']
+
+class OrganisationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organisation
-        fields = ['org_id', 'name', 'description', 'user']
-    def get_user(self, obj):
-        return [user.name for user in obj.user.all()]
+        fields = ['orgId', 'name', 'description']
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
+class RegisterOrganisationSerializers(serializers.ModelSerializer):
+    name = serializers.CharField(required=True, allow_null=False)
+    description = serializers.CharField()
+    class Meta:
+        model = Organisation
+        fields = ['name', 'description']
+
+    def validate_description(self, value):
+        if not isinstance(value, str):
+            raise serializers.ValidationError("Description must be a string.")
+        return value
+    
+    def validate(self, data):
+        errors = []
+        if not data.get('description'):
+            errors.append({'field': 'description', 'message': 'This field is required'})
+        if Organisation.objects.filter(name=data.get('name')).exists():
+            errors.append({'field': 'name', 'message': 'Organisation with name already exists'})
+        if errors:
+            raise serializers.ValidationError({'errors': errors})
+        return data
+
+# class AddUserToOrgSerializers(serializers.ModelSerializer):
+#     user_Id = serializers.UUIDField()
+#     def validate_user_Id(self, value):
+#         if not isinstance(value, str):
+#             raise serializers.ValidationError("user_Id must be a string.")
+#         return value
+    
+#     def validate(self, data):
+#         errors = []
+#         if not data.get('user_Id'):
+#             errors.append({'field': 'user_Id', 'message': 'This field is required'})
+#         if Organisation.objects.filter(users=data.get('user_Id')).exists():
+#             errors.append({'field': 'User', 'message': 'User with name already exists'})
+#         if errors:
+#             raise serializers.ValidationError({'errors': errors})
+#         return data
