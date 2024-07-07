@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-kly6e4bjb5o6_c8u8kxnwnevxo=1_!8+_j438sv)f6+6&5hbvv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['e631-102-88-82-204.ngrok-free.app','127.0.0.1', '127.0.0.1:8000']
 
 
 # Application definition
@@ -51,9 +51,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
 }
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),

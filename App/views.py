@@ -50,7 +50,7 @@ class RegisterUserView(APIView):
                 user.save()
                 
                 # Generate AccessToken for User 
-                token = RefreshToken.for_user(user)
+                token = RefreshToken.for_user(a)
                 
                 return Response({'status': 'success', 'message': 'Registration successful', 'data': {'accessToken': str(token.access_token), 'user': UserSerializer(user).data}}, status=status.HTTP_201_CREATED)
             

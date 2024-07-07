@@ -10,19 +10,6 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True},
         }
-
-    def validate_phone(self, value):
-        """
-        Check if the phone number is valid.
-        """
-        if not value.isdigit():
-            raise serializers.ValidationError("Phone number must contain only digits.")
-        elif len(value) <= 10:
-            raise serializers.ValidationError("Phone number cannot be less than 10 digits long.")
-        elif not isinstance(value, str):
-            raise serializers.ValidationError("Phone number must be a string.")
-        return value
-        
     def validate(self, data):
         errors = []
         if not data.get('firstName'):
@@ -38,6 +25,20 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         if errors:
             raise serializers.ValidationError({'errors': errors})
         return data
+    
+    def validate_phone(self, value):
+        """
+        Check if the phone number is valid.
+        """
+        if not value.isdigit():
+            raise serializers.ValidationError("Phone number must contain only digits.")
+        elif len(value) <= 10:
+            raise serializers.ValidationError("Phone number cannot be less than 10 digits long.")
+        elif not isinstance(value, str):
+            raise serializers.ValidationError("Phone number must be a string.")
+        return value
+        
+    
     
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -74,20 +75,3 @@ class RegisterOrganisationSerializers(serializers.ModelSerializer):
         if errors:
             raise serializers.ValidationError({'errors': errors})
         return data
-
-# class AddUserToOrgSerializers(serializers.ModelSerializer):
-#     user_Id = serializers.UUIDField()
-#     def validate_user_Id(self, value):
-#         if not isinstance(value, str):
-#             raise serializers.ValidationError("user_Id must be a string.")
-#         return value
-    
-#     def validate(self, data):
-#         errors = []
-#         if not data.get('user_Id'):
-#             errors.append({'field': 'user_Id', 'message': 'This field is required'})
-#         if Organisation.objects.filter(users=data.get('user_Id')).exists():
-#             errors.append({'field': 'User', 'message': 'User with name already exists'})
-#         if errors:
-#             raise serializers.ValidationError({'errors': errors})
-#         return data
