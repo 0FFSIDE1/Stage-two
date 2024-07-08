@@ -29,7 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['stage-two-nu.vercel.app','df80-102-88-68-44.ngrok-free.app','127.0.0.1', '127.0.0.1:8000', '.now.sh', '.vercel.app']
 
-
+CSRF_TRUSTED_ORIGINS = ['https://df80-102-88-68-44.ngrok-free.app']
 # Application definition
 
 INSTALLED_APPS = [
