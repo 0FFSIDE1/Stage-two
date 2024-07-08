@@ -1,7 +1,7 @@
 # serializers.py
 from rest_framework import serializers
 from .models import User, Organisation
-
+# 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
     class Meta:
