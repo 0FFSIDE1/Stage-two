@@ -23,6 +23,7 @@
         "src": "/(.*)",
         "dest": "stageTwo/wsgi.py"
       }
-    ]
+    ],
+    "outputDirectory": "staticfiles"
   }
   
