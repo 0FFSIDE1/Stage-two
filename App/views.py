@@ -143,13 +143,13 @@ class OrganisationDetailView(APIView):
             return Response({'status': 'Bad request', 'message': 'You do not have access to this organisation', 'statusCode': 403}, status=status.HTTP_403_FORBIDDEN)
 
 class AddUserToOrganisationView(APIView):
-    permission_classes = [IsAuthenticated]
     def get(self, request, pk):
         context = {
             'user_Id': "Enter a valid Id"
         }
         return Response(context, status=status.HTTP_200_OK)
     
+    permission_classes = [IsAuthenticated]
     def post(self, request, pk):
         user_id = request.data.get('user_Id')
         try:
