@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-kly6e4bjb5o6_c8u8kxnwnevxo=1_!8+_j438sv)f6+6&5hbvv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['OFFSIDE1again.pythonanywhere.com','127.0.0.1', '127.0.0.1:8000']
+ALLOWED_HOSTS = ['stage-two-nu.vercel.app','127.0.0.1', '127.0.0.1:8000']
 
 
 # Application definition
@@ -51,9 +51,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ],
+   
 }
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
@@ -117,7 +115,7 @@ DATABASES = {
         'USER': os.environ.get('DB_USERNAME'),
         'PASSWORD': os.environ.get('DB_PASSWORD'),
         'HOST': os.environ.get('DB_HOST'),   # Or your server's IP address
-        'PORT': '6543',
+        'PORT': os.environ.get('DB_POST'),
     }
 }
 
