@@ -109,7 +109,7 @@ class UserView(APIView):
         try:
             user = User.objects.get(user_Id=pk)
             return Response({'status': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(user).data}, status=status.HTTP_200_OK)
-        except User.DoesNotExist:
+        except Exception as e:
             return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 
 class OrganisationView(APIView):
