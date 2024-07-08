@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-kly6e4bjb5o6_c8u8kxnwnevxo=1_!8+_j438sv)f6+6&5hbvv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['e631-102-88-82-204.ngrok-free.app','127.0.0.1', '127.0.0.1:8000']
+ALLOWED_HOSTS = ['OFFSIDE1again.pythonanywhere.com','127.0.0.1', '127.0.0.1:8000']
 
 
 # Application definition
@@ -116,8 +116,8 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME'),
         'USER': os.environ.get('DB_USERNAME'),
         'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': 'localhost',   # Or your server's IP address
-        'PORT': '5432',
+        'HOST': os.environ.get('DB_HOST'),   # Or your server's IP address
+        'PORT': '6543',
     }
 }
 
