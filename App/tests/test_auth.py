@@ -5,7 +5,7 @@ from django.contrib.auth.models import User as AbstractUser
 from django.utils import timezone
 from django.conf import settings
 import time
-from .models import User, Organisation
+from ..models import User, Organisation
 from rest_framework.test import APIClient
 from rest_framework import status
 from django.urls import reverse
