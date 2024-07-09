@@ -117,7 +117,7 @@ class UserView(APIView):
                     if user.user_Id == pk:
                         return Response({'stats': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(user).data}, status=status.HTTP_200_OK)
                     else:
-                        return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({'status': 'error', 'message': "You don't have access to this User"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 
