@@ -30,8 +30,8 @@ class RegisterUserView(APIView):
         if serializer.is_valid():
             try:
                 # Creates an AbstractBaseUser
-                a = p.objects.create_user(username=serializer.validated_data['email'], email=serializer.validated_data['email'], password=serializer.validated_data['password'])
-                a.save()
+                AbstractBaseUser = p.objects.create_user(username=serializer.validated_data['email'], email=serializer.validated_data['email'], password=serializer.validated_data['password'])
+                AbstractBaseUser.save()
                 
                 # Hash the password
                 serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
@@ -41,16 +41,16 @@ class RegisterUserView(APIView):
                 user.save()
 
                 # Creates an default Organisation with User name   
-                org = Organisation.objects.create(name=f"{user.firstName}'s Organisation", description='')
-                org.users.add(user) # Add user to the organisation
-                org.save() 
+                organisation = Organisation.objects.create(name=f"{user.firstName}'s Organisation", description='')
+                organisation.users.add(user) # Add user to the organisation
+                organisation.save() 
 
                 # Assign AbstractBaseUser to User model, i.e the owner of the User Model. OnetoOnerelationship is estabilshed between AbstractBaseUser and User Model
-                user.owner = a
+                user.owner = AbstractBaseUser
                 user.save()
                 
                 # Generate AccessToken for User 
-                token = RefreshToken.for_user(a)
+                token = RefreshToken.for_user(AbstractBaseUser)
                 
                 return Response({'status': 'success', 'message': 'Registration successful', 'data': {'accessToken': str(token.access_token), 'user': UserSerializer(user).data}}, status=status.HTTP_201_CREATED)
             
@@ -74,14 +74,14 @@ def loginView(request):
             user = authenticate(request, username=email, password=password)
             if user is not None:
                 login(request, user)
-                u = User.objects.get(email=email)
+                user_profile = User.objects.get(email=email)
                 token = RefreshToken.for_user(user)
                 context = {
                     "status": "success",
                     "message": "Login successful",
                     "data": {
                         'accessToken': str(token.access_token),
-                        'user': UserSerializer(u).data
+                        'user': UserSerializer(user_profile).data
                     }
                 }
                 return Response(context, status=status.HTTP_200_OK)
@@ -110,7 +110,7 @@ class UserView(APIView):
             REQUEST_USER = User.objects.get(email=request.user.email)
             LOOKUP_USER = User.objects.get(user_Id=pk)
             if REQUEST_USER == LOOKUP_USER:
-                return Response({'tatus': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(LOOKUP_USER).data}, status=status.HTTP_200_OK)
+                return Response({'status': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(LOOKUP_USER).data}, status=status.HTTP_200_OK)
             else:
                 org = REQUEST_USER.user.all()
                 print(org)
@@ -118,7 +118,7 @@ class UserView(APIView):
                 print(user_in_same_org)
                 for n in user_in_same_org:
                     if n.user_Id == LOOKUP_USER.user_Id:
-                        return Response({'stats': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(n).data}, status=status.HTTP_200_OK)
+                        return Response({'status': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(n).data}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
@@ -161,13 +161,14 @@ class OrganisationDetailView(APIView):
             return Response({'status': 'Error', 'message': str(e), 'statusCode': 400}, status=status.HTTP_400_BAD_REQUEST)
 
 class AddUserToOrganisationView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, pk):
         context = {
             'user_Id': "Enter a valid Id"
         }
         return Response(context, status=status.HTTP_200_OK)
     
-    permission_classes = [IsAuthenticated]
+   
     def post(self, request, pk):
         user_id = request.data.get('user_Id')
         try:
