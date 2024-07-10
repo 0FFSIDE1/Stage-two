@@ -147,3 +147,51 @@ class TokenGenerationTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertIn('detail', response.data)
         self.assertEqual(str(response.data['detail']), 'Given token not valid for any token type')
+
+class UserAccessTest(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        
+        self.user1 = AbstractUser.objects.create_user(username='user1', email='user1@example.com', password='password')
+        self.user2 = AbstractUser.objects.create_user(username='user2', email='user2@example.com', password='password')
+        self.user3 = AbstractUser.objects.create_user(username='user3', email='user3@example.com', password='password')
+        
+        self.user1_profile = User.objects.create(
+            firstName='User',
+            lastName='One',
+            email='user1@example.com',
+            password='password',
+            owner=self.user1
+        )
+        
+        self.user2_profile = User.objects.create(
+            firstName='User',
+            lastName='Two',
+            email='user2@example.com',
+            password='password',
+            owner=self.user2
+        )
+        self.user3_profile = User.objects.create(
+            firstName='User',
+            lastName='Three',
+            email='user3@example.com',
+            password='password',
+            owner=self.user3
+        )
+        
+        self.org1 = Organisation.objects.create(name='Org1', description='Org1 Description')
+        self.org1.users.add(self.user1_profile)
+        self.org1.users.add(self.user2_profile)
+        self.org2 = Organisation.objects.create(name='Org2', description='Org2 Description')
+        self.org2.users.add(self.user3_profile)
+
+       
+
+    def test_user_data_access(self):
+         # Log in user1 and get token
+        self.client.login(username='user1@example.com', password='password')
+        response = self.client.get(f'api/users/{self.user1_profile.user_Id}')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['firstName'], self.user1_profile.firstName)
+        self.assertEqual(response.data['lastName'], self.user1_profile.lastName)
+       

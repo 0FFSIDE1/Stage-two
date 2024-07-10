@@ -112,12 +112,9 @@ class UserView(APIView):
             if REQUEST_USER == LOOKUP_USER:
                 return Response({'tatus': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(LOOKUP_USER).data}, status=status.HTTP_200_OK)
             else:
-                org = Organisation.objects.get(name=f"{REQUEST_USER.firstName}'s Organisation")
-                for user in org.users.all():
-                    if user.user_Id == pk:
-                        return Response({'stats': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(user).data}, status=status.HTTP_200_OK)
-                    else:
-                        return Response({'status': 'error', 'message': "You don't have access to this User"}, status=status.HTTP_400_BAD_REQUEST)
+                org = REQUEST_USER.user.all()
+                user_in_same_org = User.objects.filter(organisation__in=org).exclude(user_Id=REQUEST_USER.user_Id)
+                return Response({'stats': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(user_in_same_org).data}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 
