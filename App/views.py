@@ -116,7 +116,9 @@ class UserView(APIView):
                 print(org)
                 user_in_same_org = User.objects.filter(user__in=org).exclude(user_Id=REQUEST_USER.user_Id)
                 print(user_in_same_org)
-                return Response({'stats': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(user_in_same_org, many=True).data}, status=status.HTTP_200_OK)
+                for n in user_in_same_org:
+                    if n.user_Id == LOOKUP_USER.user_Id:
+                        return Response({'stats': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(n).data}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
@@ -149,8 +151,12 @@ class OrganisationDetailView(APIView):
             organisation = Organisation.objects.get(orgId=pk)
             if user in organisation.users.all():
                 return Response({'status': 'success', 'message': 'Organisation retrieved successfully', 'data': OrganisationSerializer(organisation).data}, status=status.HTTP_200_OK)
-        except Exception as e:
+        
+        except Organisation.DoesNotExist:
             return Response({'status': 'Bad request', 'message': 'You do not have access to this organisation', 'statusCode': 403}, status=status.HTTP_403_FORBIDDEN)
+        
+        except Exception as e:
+            return Response({'status': 'Error', 'message': str(e), 'statusCode': 403}, status=status.HTTP_403_FORBIDDEN)
 
 class AddUserToOrganisationView(APIView):
     def get(self, request, pk):

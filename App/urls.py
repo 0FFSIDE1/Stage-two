@@ -8,7 +8,5 @@ urlpatterns = [
     path('api/organisations', OrganisationView.as_view(), name='all-organisation'),
     path('api/organisations/<str:pk>', OrganisationDetailView.as_view(), name='organisation-detail'),
     path('api/organisations/<str:pk>/users', AddUserToOrganisationView.as_view(), name='add-user-to-organisation'),
-    
-    
 
 ]

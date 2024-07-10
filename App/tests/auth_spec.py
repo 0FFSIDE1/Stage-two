@@ -2,7 +2,6 @@ import uuid
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User as AbstractUser
-from django.utils import timezone
 from django.conf import settings
 import time
 from ..models import User, Organisation
