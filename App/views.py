@@ -151,9 +151,11 @@ class OrganisationDetailView(APIView):
             organisation = Organisation.objects.get(orgId=pk)
             if user in organisation.users.all():
                 return Response({'status': 'success', 'message': 'Organisation retrieved successfully', 'data': OrganisationSerializer(organisation).data}, status=status.HTTP_200_OK)
+            else:
+                return Response({'status': 'error', 'message': 'You are not authorised to view this'})
         
         except Organisation.DoesNotExist:
-            return Response({'status': 'Bad request', 'message': 'You do not have access to this organisation', 'statusCode': 403}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'status': 'Bad request', 'message': 'Organisation does not exist', 'statusCode': 403}, status=status.HTTP_403_FORBIDDEN)
         
         except Exception as e:
             return Response({'status': 'Error', 'message': str(e), 'statusCode': 403}, status=status.HTTP_403_FORBIDDEN)
