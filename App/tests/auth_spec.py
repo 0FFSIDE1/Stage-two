@@ -185,13 +185,34 @@ class UserAccessTest(APITestCase):
         self.org2 = Organisation.objects.create(name='Org2', description='Org2 Description')
         self.org2.users.add(self.user3_profile)
 
-       
 
-    def test_user_data_access(self):
-         # Log in user1 and get token
+
+
+        self.token = str(RefreshToken.for_user(self.user1_profile))
+        
+    
+    def test_retrieve_self(self):
         self.client.login(username='user1@example.com', password='password')
-        response = self.client.get(f'api/users/{self.user1_profile.user_Id}')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = self.client.get(f'/api/users/{self.user1_profile.user_Id}')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['firstName'], self.user1_profile.firstName)
-        self.assertEqual(response.data['lastName'], self.user1_profile.lastName)
+        self.assertEqual(response.data['status'], 'success')
+        self.assertEqual(response.data['data']['user']['email'], self.user1_profile.email)
+
+    def test_retrieve_other_user_in_same_org(self):
+        self.client.login(username='user1@example.com', password='password')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = self.client.get(f'/api/users/{self.user2_profile.user_Id}')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['status'], 'success')
+        print(response.data)
+        self.assertIn('email', response.data['data']['user'][0])
+
+    def test_user_not_found(self):
+        self.client.login(username='user1@example.com', password='password')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = self.client.get(f'/api/users/{self.user3_profile.user_Id}')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data['status'], 'error')
+        self.assertEqual(response.data['message'], 'User not found')
        

@@ -107,16 +107,20 @@ class UserView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, pk):
         try:
-            REQUEST_USER = User.objects.get(email=request.user)
+            REQUEST_USER = User.objects.get(email=request.user.email)
             LOOKUP_USER = User.objects.get(user_Id=pk)
             if REQUEST_USER == LOOKUP_USER:
                 return Response({'tatus': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(LOOKUP_USER).data}, status=status.HTTP_200_OK)
             else:
                 org = REQUEST_USER.user.all()
-                user_in_same_org = User.objects.filter(organisation__in=org).exclude(user_Id=REQUEST_USER.user_Id)
-                return Response({'stats': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(user_in_same_org).data}, status=status.HTTP_200_OK)
+                print(org)
+                user_in_same_org = User.objects.filter(user__in=org).exclude(user_Id=REQUEST_USER.user_Id)
+                print(user_in_same_org)
+                return Response({'stats': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(user_in_same_org, many=True).data}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'status': 'error', 'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class OrganisationView(APIView):
     permission_classes = [IsAuthenticated]
