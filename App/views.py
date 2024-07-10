@@ -158,7 +158,7 @@ class OrganisationDetailView(APIView):
             return Response({'status': 'Bad request', 'message': 'Organisation does not exist', 'statusCode': 403}, status=status.HTTP_403_FORBIDDEN)
         
         except Exception as e:
-            return Response({'status': 'Error', 'message': str(e), 'statusCode': 403}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'status': 'Error', 'message': str(e), 'statusCode': 400}, status=status.HTTP_400_BAD_REQUEST)
 
 class AddUserToOrganisationView(APIView):
     def get(self, request, pk):
