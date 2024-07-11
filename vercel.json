@@ -5,6 +5,10 @@
         "src": "stageTwo/wsgi.py",
         "use": "@vercel/python",
         "config": { "maxLambdaSize": "15mb", "runtime": "python3.10" }
+      },
+      {
+        "src": "staticfiles/**",
+        "use": "@vercel/static"
       }
     ],
     "routes": [
