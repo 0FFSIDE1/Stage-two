@@ -29,7 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['stage-two-nu.vercel.app','stage-nclzmwfel-0ffside1s-projects.vercel.app','71a9-102-88-83-219.ngrok-free.app', '127.0.0.1', '127.0.0.1:8000']
 
-CSRF_TRUSTED_ORIGINS = ['https://71a9-102-88-83-219.ngrok-free.app', 'https://stage-two-nu.vercel.app']
+CSRF_TRUSTED_ORIGINS = ['https://71a9-102-88-83-219.ngrok-free.app', 'https://stage-two-nu.vercel.app', 'http://localhost:8000', 'http://127.0.0.1:8000']
 # Application definition
 CSRF_COOKIE_SECURE = True
 INSTALLED_APPS = [
