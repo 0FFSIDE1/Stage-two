@@ -108,16 +108,16 @@ class UserView(APIView):
     def get(self, request, pk):
         try:
             REQUEST_USER = User.objects.get(email=request.user.email)
-            LOOKUP_USER = User.objects.get(user_Id=pk)
+            LOOKUP_USER = User.objects.get(userId=pk)
             if REQUEST_USER == LOOKUP_USER:
                 return Response({'status': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(LOOKUP_USER).data}, status=status.HTTP_200_OK)
             else:
                 org = REQUEST_USER.user.all()
                 print(org)
-                user_in_same_org = User.objects.filter(user__in=org).exclude(user_Id=REQUEST_USER.user_Id)
+                user_in_same_org = User.objects.filter(user__in=org).exclude(userId=REQUEST_USER.userId)
                 print(user_in_same_org)
                 for n in user_in_same_org:
-                    if n.user_Id == LOOKUP_USER.user_Id:
+                    if n.userId == LOOKUP_USER.userId:
                         return Response({'status': 'success', 'message': 'User retrieved successfully', 'data': UserSerializer(n).data}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'status': 'error', 'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -147,12 +147,12 @@ class OrganisationDetailView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, pk):
         try:
-            user = User.objects.get(email=request.user)
+            user = User.objects.get(owner=request.user)
             organisation = Organisation.objects.get(orgId=pk)
             if user in organisation.users.all():
                 return Response({'status': 'success', 'message': 'Organisation retrieved successfully', 'data': OrganisationSerializer(organisation).data}, status=status.HTTP_200_OK)
             else:
-                return Response({'status': 'error', 'message': 'You are not authorised to view this'})
+                return Response({'status': 'error', 'message': 'You are not authorised to view this'}, status=status.HTTP_403_FORBIDDEN)
         
         except Organisation.DoesNotExist:
             return Response({'status': 'Bad request', 'message': 'Organisation does not exist', 'statusCode': 403}, status=status.HTTP_403_FORBIDDEN)
@@ -164,16 +164,16 @@ class AddUserToOrganisationView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, pk):
         context = {
-            'user_Id': "Enter a valid Id"
+            'userId': "Enter a valid Id"
         }
         return Response(context, status=status.HTTP_200_OK)
     
    
     def post(self, request, pk):
-        user_id = request.data.get('user_Id')
+        userId = request.data.get('userId')
         try:
             organisation = Organisation.objects.get(orgId=pk)
-            user = get_object_or_404(User, user_Id=user_id)
+            user = get_object_or_404(User, userId=userId)
             print(user)
             if user:
                 organisation.users.add(user)

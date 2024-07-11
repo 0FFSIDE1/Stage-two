@@ -43,7 +43,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['user_Id', 'firstName', 'lastName', 'email', 'phone']
+        fields = ['userId', 'firstName', 'lastName', 'email', 'phone']
 
 class OrganisationSerializer(serializers.ModelSerializer):
     class Meta:
