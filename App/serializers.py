@@ -30,9 +30,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         """
         Check if the phone number is valid.
         """
-        if not value.isdigit():
-            raise serializers.ValidationError("Phone number must contain only digits.")
-        elif len(value) <= 10:
+        if len(value) <= 10:
             raise serializers.ValidationError("Phone number cannot be less than 10 digits long.")
         elif not isinstance(value, str):
             raise serializers.ValidationError("Phone number must be a string.")
